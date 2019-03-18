@@ -110,7 +110,7 @@ library(lubridate)
 # rm(dl, ratings, movies, test_index, temp, removed)
 ```
 
-```{r load a smaller data set, echo=FALSE, error=FALSE, message=FALSE, warning=FALSE}
+```{r load a smaller data set, error=FALSE, message=FALSE, warning=FALSE, include=FALSE}
 ###########################################################################
 # This code replaces the original code for dowloading input data
 # with dowloading a sample of 500k records, which makes the analysis better
@@ -123,20 +123,18 @@ library(tidyverse)
 library(caret)
 # initial data analysis was done using a smaller data set
 
-# this is a link to edx_1000k.dat file placed on my OneDrive public folder
-# "https://1drv.ms/u/s!AvUHuDRMH7R4hbF1wN2eh34wraHISw"
-# 
-# I also had it in a local subfolder ml-10M100k/edx_1000k.dat
-# movielens <- read_csv("ml-10M100k/edx_1000k.dat", col_names = TRUE, n_max = 500000)
-
 set.seed(1)
 
-# dowload edx_1000k.dat from one drive and select 500000 records
-download.file("https://1drv.ms/u/s!AvUHuDRMH7R4hbF1wN2eh34wraHISw", "./edx_100k_02.dat")
-movielens <- read_csv("https://1drv.ms/u/s!AvUHuDRMH7R4hbF1wN2eh34wraHISw", col_names = TRUE, n_max = 100000)
+# read edx_500k_02.dat file directly from Amazon S3
+# movielens <- read_csv("https://s3.amazonaws.com/terraform-bucket-dq001/edx_500k_02.dat", col_names = TRUE, n_max = 500000)
+
+# download and save edx_500k_02.dat locally
+download.file("https://s3.amazonaws.com/terraform-bucket-dq001/edx_500k_02.dat", "edx_500k_loc.dat")
+movielens <- read_csv("edx_500k_loc.dat")
+
 test_index <- createDataPartition(y = movielens$rating, times = 1, p = 0.1, list = FALSE)
 
-edx <- movielens[-test_index,] # training set
+edx <- movielens[-test_index,] # training set 
 temp <- movielens[test_index,] # temporary validation set
 
 # Make sure userId and movieId in validation set are also in edx set
